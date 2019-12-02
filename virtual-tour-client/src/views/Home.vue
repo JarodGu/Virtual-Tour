@@ -1,17 +1,18 @@
 <template>
   <div class="home">
     <h2>Virtual Tour</h2>
+    <tour-overview/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import TourOverview from "@/components/TourOverview.vue"
 
 export default {
   name: "home",
   components: {
-    HelloWorld
+    TourOverview
   }
 };
 </script>

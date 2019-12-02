@@ -1,8 +1,11 @@
 <template>
-  <h2>A tour</h2>
+  <div>
+    <h2>A tour</h2>
+  </div>
 </template>
 
 <script>
+
 export default {
   data: () => {
     return {
