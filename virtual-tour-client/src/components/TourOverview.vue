@@ -1,20 +1,31 @@
 <template>
-  <v-card class="card">
-    <h3>Tour name</h3>
+  <div class="card">
+    <h3>{{ title }}</h3>
     <span>Some sort of tour description</span>
-  </v-card>
+  </div>
 </template>
 
 <script>
 export default {
-  name: "TourOverview"
+  name: "TourOverview",
+  props: ["title"]
 };
 </script>
 
 <style scoped>
 .card {
-  height: 7.5rem;
+  /* Add shadows to create the "card" effect */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
   width: 15rem;
-  padding: 1rem;
+  height: 15rem;
+  padding: 1.5rem;
+  margin: 1rem;
+  border-radius: 10px; /* 5px rounded corners */
+}
+
+/* On mouse-over, add a deeper shadow */
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
 }
 </style>
