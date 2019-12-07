@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card" v-on:click="onNavigate()">
     <h3>{{ title }}</h3>
     <span>Some sort of tour description</span>
   </div>
@@ -8,7 +8,12 @@
 <script>
 export default {
   name: "TourOverview",
-  props: ["title"]
+  props: ["title", "id"],
+  methods: {
+    onNavigate: function() {
+      this.$router.push(`/tour/${this.id}`);
+    }
+  }
 };
 </script>
 

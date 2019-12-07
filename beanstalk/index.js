@@ -10,13 +10,16 @@ const lambda = new AWS.Lambda({
 const port = process.env.PORT || 3000;
 app.use(cors());
 app.get('/api/album', (request, response) => {
+    console.log(request.query);
+
     const params = {
         FunctionName: 'GetAlbumImages',
         InvocationType: 'RequestResponse',
         Payload: JSON.stringify({
-            AlbumID: 3
+            AlbumID: Number.parseInt(request.query.id)
         })
     };
+    console.log(params);
 
     lambda
         .invoke(params)
