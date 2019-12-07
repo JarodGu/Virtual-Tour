@@ -1,18 +1,34 @@
 <template>
   <div class="card" v-on:click="onNavigate()">
     <h3>{{ title }}</h3>
-    <span>Some sort of tour description</span>
+    <span>{{ albumInfo.AlbumDescription }}</span>
   </div>
 </template>
 
 <script>
+import Axios from "axios";
+
 export default {
   name: "TourOverview",
   props: ["title", "id"],
+  data: () => {
+    return {
+      albumInfo: {
+        AlbumDescription: ""
+      }
+    };
+  },
   methods: {
     onNavigate: function() {
       this.$router.push(`/tour/${this.id}`);
     }
+  },
+  created: async function() {
+    const result = await Axios.get(
+      `http://virtualtour-prod.kg3cdf3ppz.us-west-2.elasticbeanstalk.com/api/album/?id=${this.id}`
+    );
+    this.albumInfo = result.data;
+    console.log(this.albumInfo);
   }
 };
 </script>

@@ -9,7 +9,29 @@ const lambda = new AWS.Lambda({
 
 const port = process.env.PORT || 3000;
 app.use(cors());
-app.get('/api/album', (request, response) => {
+
+app.get('/api/image', (request, response) => {
+    const params = {
+        FunctionName: 'GetImageInfo',
+        InvocationType: 'RequestResponse',
+        Payload: JSON.stringify({
+            ImageID: Number.parseInt(request.query.ImageID),
+            AlbumID: Number.parseInt(request.query.AlbumID)
+        })
+    };
+
+    lambda
+        .invoke(params)
+        .promise()
+        .then(result => {
+            response.send(JSON.parse(JSON.parse(result.Payload).body));
+        })
+        .catch(error => {
+            response.send(error);
+        });
+});
+
+app.get('/api/album', async (request, response) => {
     console.log(request.query);
 
     const params = {
@@ -21,15 +43,24 @@ app.get('/api/album', (request, response) => {
     };
     console.log(params);
 
-    lambda
-        .invoke(params)
-        .promise()
-        .then(result => {
-            response.send(JSON.parse(JSON.parse(result.Payload).body));
+    let result = await lambda.invoke(params).promise();
+    const albumImages = JSON.parse(JSON.parse(result.Payload).body);
+
+    const params1 = {
+        FunctionName: 'GetAlbumInfo',
+        InvocationType: 'RequestResponse',
+        Payload: JSON.stringify({
+            AlbumID: Number.parseInt(request.query.id)
         })
-        .catch(error => {
-            response.send(error);
-        });
+    };
+
+    result = await lambda.invoke(params1).promise();
+    const albumInfo = JSON.parse(JSON.parse(result.Payload).body);
+
+    response.send({
+        images: albumImages,
+        ...albumInfo
+    });
 });
 
 app.get('/api/albums', (request, response) => {
