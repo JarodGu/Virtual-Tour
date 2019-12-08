@@ -1,0 +1,38 @@
+{
+    "Version": "2008-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowPublicRead",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::virtual-tour-storage/*"
+        },
+        {
+            "Sid": "LimitFileTypes",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "s3:PutObject",
+            "Resource": [
+                "arn:aws:s3:::virtual-tour-storage/*.jpg",
+                "arn:aws:s3:::virtual-tour-storage/*.png",
+                "arn:aws:s3:::virtual-tour-storage/*.gif"
+            ]
+        },
+        {
+            "Sid": "DenyFileTypes",
+            "Effect": "Deny",
+            "Principal": "*",
+            "Action": "s3:PutObject",
+            "NotResource": [
+                "arn:aws:s3:::virtual-tour-storage/*.jpg",
+                "arn:aws:s3:::virtual-tour-storage/*.png",
+                "arn:aws:s3:::virtual-tour-storage/*.gif"
+            ]
+        }
+    ]
+}
