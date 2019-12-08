@@ -9,6 +9,13 @@
         :id="albumIds[index]"
       />
     </div>
+
+    <label>
+      File
+      <input type="file" id="file" ref="file" v-on:change="handleFileUpload()" />
+    </label>
+    <button v-on:click="submitFile()">Submit</button>
+    <v-text-field label="New Album Name" placeholder="New Album Name" v-model="newAlbumName"></v-text-field>
   </div>
 </template>
 
@@ -25,8 +32,31 @@ export default {
   data: function() {
     return {
       albums: [],
-      albumIds: []
+      albumIds: [],
+      file: "",
+      newAlbumName: ""
     };
+  },
+  methods: {
+    handleFileUpload: function() {
+      this.file = this.$refs.file.files[0];
+    },
+    submitFile: async function() {
+      const formData = new FormData();
+      console.log(this.file);
+      formData.append("file", this.file);
+      formData.append("albumName", this.newAlbumName);
+      formData.append("fileName", this.file.name);
+      const result = await Axios.post(
+        "http://virtualtour-prod.kg3cdf3ppz.us-west-2.elasticbeanstalk.com/api/album",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
+    }
   },
   created: async function() {
     const result = await Axios.get(

@@ -60,8 +60,7 @@ export default {
           console.log(picture);
           promises.push(
             Axios.get(
-              `http://virtualtour-prod.kg3cdf3ppz.us-west-2.elasticbeanstalk.com/api/image?ImageID=${index +
-                1}&AlbumID=${params.id}`
+              `http://virtualtour-prod.kg3cdf3ppz.us-west-2.elasticbeanstalk.com/api/image?ImageID=${index}&AlbumID=${params.id}`
             )
           );
         });

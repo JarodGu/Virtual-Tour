@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const history = require('connect-history-api-fallback');
 const cors = require('cors');
+const expressFormidable = require('express-formidable');
+const fs = require('fs');
 const AWS = require('aws-sdk');
 const lambda = new AWS.Lambda({
     region: 'us-west-2'
@@ -9,6 +11,7 @@ const lambda = new AWS.Lambda({
 
 const port = process.env.PORT || 3000;
 app.use(cors());
+app.use(expressFormidable());
 
 app.get('/api/image', (request, response) => {
     const params = {
@@ -29,6 +32,51 @@ app.get('/api/image', (request, response) => {
         .catch(error => {
             response.send(error);
         });
+});
+
+app.post('/api/album', cors(), (request, response) => {
+    const S3 = new AWS.S3({
+        region: 'us-west-2'
+    });
+    console.log(request.fields);
+    const fileName = request.files.file.name,
+        albumName = request.fields.albumName;
+    console.log(fileName, albumName);
+
+    fs.readFile(request.files.file.path, async (err, data) => {
+        try {
+            console.log(data);
+
+            const params = {
+                Body: data,
+                Bucket: 'virtual-tour-storage',
+                Key: `${albumName}/${fileName}`
+            };
+
+            console.log(params);
+
+            const result = await S3.putObject(params).promise();
+
+            const createParams = {
+                FunctionName: 'CreateImageItem',
+                InvocationType: 'RequestResponse',
+                Payload: JSON.stringify({
+                    AlbumName: albumName,
+                    AlbumDescription: 'This is a new album',
+                    S3URL: `https://virtual-tour-storage.s3-us-west-2.amazonaws.com/${albumName}/${fileName}`,
+                    Annotations: [],
+                    Location: 'Seattle'
+                })
+            };
+
+            const result2 = await lambda.invoke(createParams).promise();
+            console.log(result2);
+            response.send({ info: 'request finished' });
+        } catch (error) {
+            console.log(error);
+            response.send(error);
+        }
+    });
 });
 
 app.get('/api/album', async (request, response) => {
